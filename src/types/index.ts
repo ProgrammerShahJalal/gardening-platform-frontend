@@ -47,3 +47,12 @@ export interface Posts {
 export interface PostResponse {
   data: Post;
 }
+
+
+export interface ApiError extends Error {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
