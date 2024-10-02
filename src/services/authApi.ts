@@ -20,6 +20,7 @@ interface LoginPayload {
 // Define the response types
 
 interface AuthResponse {
+  success: boolean;
   message: string;
   token: string;
   user: {

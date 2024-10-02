@@ -1,3 +1,4 @@
+"use client";
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -7,19 +8,30 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@nextui-org/navbar";
-
 import { Link } from "@nextui-org/link";
-
 import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
-
 import { siteConfig } from "@/src/config/site";
 import { ThemeSwitch } from "@/src/components/theme-switch";
-import { Logo } from "@/src/components/icons";
 import Image from "next/image";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/button";
+import { useEffect, useState } from "react";
+import { handleLogout } from "../hooks/auth.hooks";
 
 export const Navbar = () => {
+  const router = useRouter();
+
+  // Client-side state to check if user is logged in
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  // This effect will only run on the client
+  useEffect(() => {
+    setLoggedIn(Cookies.get("accessToken") !== undefined);
+  }, []);
+
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -52,7 +64,27 @@ export const Navbar = () => {
         justify="end"
       >
         <ThemeSwitch />
-        <NavbarItem className="hidden md:flex"></NavbarItem>
+        <NavbarItem className="hidden md:flex">
+          {loggedIn ? (
+            <>
+              {/* Show when user is logged in */}
+              <NextLink href="/profile" className={(linkStyles(), "mr-4 mt-2")}>
+                Profile
+              </NextLink>
+              <Button onClick={() => handleLogout(router)}>Logout</Button>
+            </>
+          ) : (
+            <>
+              {/* Show when user is not logged in */}
+              <NextLink href="/login" className={(linkStyles(), "mr-2")}>
+                Login
+              </NextLink>
+              <NextLink href="/register" className={(linkStyles(), "ml-2")}>
+                Register
+              </NextLink>
+            </>
+          )}
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
@@ -79,6 +111,32 @@ export const Navbar = () => {
               </Link>
             </NavbarMenuItem>
           ))}
+
+          <NavbarMenuItem className="md:hidden flex">
+            {loggedIn ? (
+              <>
+                {/* Show when user is logged in */}
+                <NextLink
+                  href="/profile"
+                  className={(linkStyles(), "mr-4 mt-2")}
+                >
+                  Profile
+                </NextLink>
+                <br /> <br />
+                <Button onClick={() => handleLogout(router)}>Logout</Button>
+              </>
+            ) : (
+              <>
+                {/* Show when user is not logged in */}
+                <NextLink href="/login" className={(linkStyles(), "mr-2")}>
+                  Login
+                </NextLink>
+                <NextLink href="/register" className={(linkStyles(), "ml-2")}>
+                  Register
+                </NextLink>
+              </>
+            )}
+          </NavbarMenuItem>
         </div>
       </NavbarMenu>
     </NextUINavbar>

@@ -24,12 +24,22 @@ const LoginForm = () => {
 
     try {
       const data = await loginUser(form);
-      toast("Login Successful!", {
-        className: "border-green-500 text-base",
-        description: data?.message, 
-        duration: 3000,
-        icon: <IoCheckmarkDoneCircleOutline />, 
-      });
+      if(data?.success){
+        toast("Login Successful!", {
+          className: "border-green-500 text-base",
+          description: data?.message, 
+          duration: 3000,
+          icon: <IoCheckmarkDoneCircleOutline />, 
+        });
+      }else{
+        toast("Invalid Credentials!", {
+          className: "border-red-500 text-base",
+          description: data?.message,
+          duration: 3000,
+          icon: <IoCloseCircleOutline />,
+          });
+      }
+      
       setCookie(null, "accessToken", data.token, { path: "/" }); // Save token as a cookie
       setForm({ email: "", password: "" });
       router.push("/"); // Redirect to home page after login
