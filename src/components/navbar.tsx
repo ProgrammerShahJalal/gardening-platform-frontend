@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -12,32 +13,32 @@ import { Link } from "@nextui-org/link";
 import { link as linkStyles } from "@nextui-org/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { siteConfig } from "@/src/config/site";
-import { ThemeSwitch } from "@/src/components/theme-switch";
 import Image from "next/image";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
-import { Button } from "@nextui-org/button";
-import { useEffect, useState } from "react";
-import { handleLogout } from "../hooks/auth.hooks";
+import {
+  Avatar,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Dropdown,
+} from "@nextui-org/react";
 
-export const Navbar = () => {
-  const router = useRouter();
+import { useAuth } from "../context/AuthContext";
 
-  // Client-side state to check if user is logged in
-  const [loggedIn, setLoggedIn] = useState(false);
+import { ThemeSwitch } from "@/src/components/theme-switch";
+import { siteConfig } from "@/src/config/site";
 
-  // This effect will only run on the client
-  useEffect(() => {
-    setLoggedIn(Cookies.get("accessToken") !== undefined);
-  }, []);
+export const Navbar: React.FC = async () => {
+  const { user, logout } = useAuth();
 
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+        <NavbarContent className="sm:hidden basis-1 pl-4" justify="start">
+          <NavbarMenuToggle />
+        </NavbarContent>
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Image src={"/logo.svg"} width={40} height={40} alt={"Logo"} />
+            <Image alt={"Logo"} height={40} src={"/logo.svg"} width={40} />
             <p className="font-bold text-inherit">GreenLife</p>
           </NextLink>
         </NavbarBrand>
@@ -47,7 +48,7 @@ export const Navbar = () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium",
                 )}
                 color="foreground"
                 href={item.href}
@@ -59,37 +60,58 @@ export const Navbar = () => {
         </ul>
       </NavbarContent>
 
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
+      <NavbarContent as="div" justify="end">
         <ThemeSwitch />
-        <NavbarItem className="hidden md:flex">
-          {loggedIn ? (
-            <>
-              {/* Show when user is logged in */}
-              <NextLink href="/profile" className={(linkStyles(), "mr-4 mt-2")}>
-                Profile
-              </NextLink>
-              <Button onClick={() => handleLogout(router)}>Logout</Button>
-            </>
-          ) : (
-            <>
-              {/* Show when user is not logged in */}
-              <NextLink href="/login" className={(linkStyles(), "mr-2")}>
-                Login
-              </NextLink>
-              <NextLink href="/register" className={(linkStyles(), "ml-2")}>
-                Register
-              </NextLink>
-            </>
-          )}
-        </NavbarItem>
-      </NavbarContent>
+        <Dropdown placement="bottom-end">
+          <DropdownTrigger>
+            <Avatar
+              isBordered
+              as="button"
+              className="transition-transform"
+              color="secondary"
+              name="profilePicture"
+              size="sm"
+              src={user?.profilePicture}
+            />
+          </DropdownTrigger>
+          <DropdownMenu aria-label="Profile Actions" variant="flat">
+            <DropdownItem key="email" className="h-14 gap-2">
+              {user?.email ? (
+                <>
+                  <p className="font-semibold">Signed in as</p>
+                  <p className="font-semibold">{user?.email}</p>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold">Signed in as</p>
+                  <p className="font-semibold">Guest</p>
+                </>
+              )}
+            </DropdownItem>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <ThemeSwitch />
-        <NavbarMenuToggle />
+            {user ? (
+              <>
+                <DropdownItem key="profile" color="primary" href="/profile">
+                  Profile
+                </DropdownItem>
+
+                <DropdownItem key="logout" color="danger" onClick={logout}>
+                  Log Out
+                </DropdownItem>
+              </>
+            ) : (
+              <>
+                <DropdownItem key="login" color="primary" href="/login">
+                  Log In
+                </DropdownItem>
+
+                <DropdownItem key="register" color="primary" href="/register">
+                  Sign Up
+                </DropdownItem>
+              </>
+            )}
+          </DropdownMenu>
+        </Dropdown>
       </NavbarContent>
 
       <NavbarMenu>
@@ -101,8 +123,8 @@ export const Navbar = () => {
                   index === 2
                     ? "primary"
                     : index === siteConfig.navMenuItems.length - 1
-                    ? "danger"
-                    : "foreground"
+                      ? "danger"
+                      : "foreground"
                 }
                 href="#"
                 size="lg"
@@ -111,32 +133,6 @@ export const Navbar = () => {
               </Link>
             </NavbarMenuItem>
           ))}
-
-          <NavbarMenuItem className="md:hidden flex">
-            {loggedIn ? (
-              <>
-                {/* Show when user is logged in */}
-                <NextLink
-                  href="/profile"
-                  className={(linkStyles(), "mr-4 mt-2")}
-                >
-                  Profile
-                </NextLink>
-                <br /> <br />
-                <Button onClick={() => handleLogout(router)}>Logout</Button>
-              </>
-            ) : (
-              <>
-                {/* Show when user is not logged in */}
-                <NextLink href="/login" className={(linkStyles(), "mr-2")}>
-                  Login
-                </NextLink>
-                <NextLink href="/register" className={(linkStyles(), "ml-2")}>
-                  Register
-                </NextLink>
-              </>
-            )}
-          </NavbarMenuItem>
         </div>
       </NavbarMenu>
     </NextUINavbar>

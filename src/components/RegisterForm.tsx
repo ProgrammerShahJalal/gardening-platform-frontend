@@ -1,26 +1,29 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { registerUser } from "../services/authApi";
 import { toast } from "sonner";
-import { IoCheckmarkDoneCircleOutline, IoCloseCircleOutline } from "react-icons/io5";
-import { IoAlertCircleOutline } from "react-icons/io5";
+import {
+  IoCheckmarkDoneCircleOutline,
+  IoCloseCircleOutline,
+} from "react-icons/io5";
+
+import { registerUser } from "../services/authApi";
 
 const RegisterForm = () => {
-    const defaultFormValues = {
-        role: "user",
-        securityAnswers: ["", ""],
-      };
-      
-      const [form, setForm] = useState({
-        name: "",
-        email: "",
-        password: "",
-        phone: "",
-        address: "",
-        ...defaultFormValues,
-      });
+  const defaultFormValues = {
+    role: "user",
+    securityAnswers: ["", ""],
+  };
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    address: "",
+    ...defaultFormValues,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -35,15 +38,16 @@ const RegisterForm = () => {
     setError(null);
 
     try {
-        const result = await registerUser(form);
-        toast("Signup Successful!", {
-          className: "border-green-500 text-base",
-          description: result?.message, 
-          duration: 3000,
-          icon: <IoCheckmarkDoneCircleOutline />, 
-        });
+      const result = await registerUser(form);
 
-        // Clear the form after success
+      toast("Signup Successful!", {
+        className: "border-green-500 text-base",
+        description: result?.message,
+        duration: 3000,
+        icon: <IoCheckmarkDoneCircleOutline />,
+      });
+
+      // Clear the form after success
       setForm({
         name: "",
         email: "",
@@ -55,92 +59,93 @@ const RegisterForm = () => {
 
       router.push("/login");
     } catch (err: any) {
-        setError(err.message);
-        toast("Signup Failed!", {
-          className: "border-red-500 text-base",
-          description: err?.message, 
-          duration: 3000,
-          icon: <IoCloseCircleOutline />, 
-        });
+      setError(err.message);
+      toast("Signup Failed!", {
+        className: "border-red-500 text-base",
+        description: err?.message,
+        duration: 3000,
+        icon: <IoCloseCircleOutline />,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}
-    className="flex flex-col space-y-4 py-10 md:w-8/12 mx-auto"
+    <form
+      className="flex flex-col space-y-4 py-10 md:w-8/12 mx-auto"
+      onSubmit={handleSubmit}
     >
       <Input
-        name="name"
+        fullWidth
+        required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
         label="Name"
-        fullWidth
-        required
+        name="name"
         onChange={handleInputChange}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <Input
-        name="email"
+        fullWidth
+        required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
         label="Email"
+        name="email"
         type="email"
-        fullWidth
-        required
         onChange={handleInputChange}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <Input
-        name="password"
+        fullWidth
+        required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
         label="Password"
+        name="password"
         type="password"
-        fullWidth
-        required
         onChange={handleInputChange}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <Input
-        name="phone"
+        fullWidth
+        required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
         label="Phone"
-        fullWidth
-        required
+        name="phone"
         onChange={handleInputChange}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <Input
-        name="address"
+        fullWidth
+        required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
         label="Address"
-        fullWidth
-        required
+        name="address"
         onChange={handleInputChange}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <Input
-        name="securityAnswers[0]"
-        label="In what city and state were you born?"
         fullWidth
         required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        label="In what city and state were you born?"
+        name="securityAnswers[0]"
         onChange={(e) => {
           const updatedAnswers = [...form.securityAnswers];
+
           updatedAnswers[0] = e.target.value;
           setForm({ ...form, securityAnswers: updatedAnswers });
         }}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       <Input
-        name="securityAnswers[1]"
-        label="What is your favorite childhood toy?"
         fullWidth
         required
+        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        label="What is your favorite childhood toy?"
+        name="securityAnswers[1]"
         onChange={(e) => {
           const updatedAnswers = [...form.securityAnswers];
+
           updatedAnswers[1] = e.target.value;
           setForm({ ...form, securityAnswers: updatedAnswers });
         }}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <Button 
-      className="w-1/6 mx-auto"
-      type="submit" disabled={loading}>
+      <Button className="w-1/6 mx-auto" disabled={loading} type="submit">
         {loading ? "Registering..." : "Register"}
       </Button>
     </form>

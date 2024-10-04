@@ -1,6 +1,10 @@
-import { Navbar } from "@/src/components/navbar";
+import { Navbar } from "@/src/components/Navbar";
 
-export default function layout({ children }: { children: React.ReactNode }) {
+export default async function layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="relative flex flex-col h-screen">
       <Navbar />

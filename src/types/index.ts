@@ -48,11 +48,75 @@ export interface PostResponse {
   data: Post;
 }
 
-
 export interface ApiError extends Error {
   response?: {
     data?: {
       message?: string;
     };
+  };
+}
+
+// Define the Profile interface
+export interface Follower {
+  _id: string;
+  name: string;
+  profilePicture: string;
+}
+
+export interface Profile {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  profilePicture: string;
+  followers: Follower[];
+  following: Follower[];
+  isVerified: boolean;
+}
+
+// Define the API response structure
+export interface ProfileResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Profile;
+}
+
+// Define the login user info types
+export interface LoginUserInfo {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  profilePicture?: string;
+}
+
+// Define the request payload types
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  address: string;
+  role?: string;
+  securityAnswers: string[];
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+// Define the response types
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  token: string;
+  data: {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+    profilePicture?: string;
   };
 }

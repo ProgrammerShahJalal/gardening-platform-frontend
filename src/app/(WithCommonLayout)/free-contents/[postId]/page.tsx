@@ -18,7 +18,7 @@ const PostDetailsPage = async ({ params }: { params: { postId: string } }) => {
         Posted on: {new Date(post.createdAt).toLocaleDateString()}
       </p>
       <div className="mb-6">
-      <ImageGallery images={post?.images} />
+        <ImageGallery images={post?.images} />
       </div>
       <div className="prose max-w-full">
         <p>{post.content}</p>

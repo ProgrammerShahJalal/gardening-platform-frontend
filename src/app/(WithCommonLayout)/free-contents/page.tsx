@@ -1,7 +1,8 @@
+import { Link } from "@nextui-org/link";
+
 import { title } from "@/src/components/primitives";
 import nexiosInstance from "@/src/config/nexios.config";
 import { Post, Posts } from "@/src/types";
-import { Link } from "@nextui-org/link";
 
 const FreeContentsPage = async () => {
   const { data } = await nexiosInstance.get<Posts>("/post", {
@@ -22,9 +23,9 @@ const FreeContentsPage = async () => {
             <p className="mb-4">{post.content.substring(0, 100)}...</p>
             {post.images.length > 0 && (
               <img
-                src={post.images[0]}
                 alt={post.title}
                 className="w-full h-48 object-cover rounded-lg mb-4"
+                src={post.images[0]}
               />
             )}
             <Link href={`/free-contents/${post._id}`}>

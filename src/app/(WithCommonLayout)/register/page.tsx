@@ -1,8 +1,6 @@
-"use client"; 
+"use client";
 import { title } from "@/src/components/primitives";
 import RegisterForm from "@/src/components/RegisterForm";
-
-
 
 const RegisterPage = () => {
   return (

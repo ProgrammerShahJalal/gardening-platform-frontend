@@ -1,36 +1,37 @@
-import Cookies from "js-cookie";
 import { Nexios } from "nexios-http";
+import { NexiosOptions } from "nexios-http/types/interfaces";
+import Cookies from "js-cookie";
 
-
-const nexiosInstance = new Nexios({
+// Default configuration for Nexios
+const defaultConfig: NexiosOptions = {
   baseURL: "https://gardening-platform-backend-delta.vercel.app/api/v1",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  credentials: "include",
+  credentials: "include", // Ensure cookies are included in requests
   timeout: 10000,
-});
+};
 
-// Add request interceptor
+const nexiosInstance = new Nexios(defaultConfig);
+
+// Add request interceptor to include token
 nexiosInstance.interceptors.request.use((config) => {
-  const accessToken = Cookies.get("accessToken"); 
+  const accessToken = Cookies.get("accessToken");
 
   if (accessToken) {
     config.headers = {
       ...config.headers,
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`, // Include token in Authorization header
     };
   }
 
   return config;
 });
 
-// Add response interceptor
+// Add response interceptor (optional)
 nexiosInstance.interceptors.response.use((response) => {
-  // Transform response data if needed
   return response;
 });
-
 
 export default nexiosInstance;

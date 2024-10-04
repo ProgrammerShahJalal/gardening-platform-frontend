@@ -1,16 +1,21 @@
-"use client"
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { setCookie } from "nookies";
-import { loginUser } from "../services/authApi";
-import { IoCheckmarkDoneCircleOutline, IoCloseCircleOutline } from "react-icons/io5";
+import {
+  IoCheckmarkDoneCircleOutline,
+  IoCloseCircleOutline,
+} from "react-icons/io5";
 import { toast } from "sonner";
+
+import { loginUser } from "../services/authApi";
+import { useAuth } from "../context/AuthContext";
+import { LoginUserInfo } from "../types";
 
 const LoginForm = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth(); // Access login function from AuthContext
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,33 +29,42 @@ const LoginForm = () => {
 
     try {
       const data = await loginUser(form);
-      if(data?.success){
+
+      if (data?.success) {
+        const user: LoginUserInfo = {
+          _id: data?.data?._id,
+          name: data?.data?.name,
+          email: data?.data?.email,
+          role: data?.data?.role,
+          profilePicture: data?.data?.profilePicture,
+        };
+
+        // Use the login method from context
+        login(data?.token, user); // Pass token and user info to context
+
         toast("Login Successful!", {
           className: "border-green-500 text-base",
-          description: data?.message, 
-          duration: 3000,
-          icon: <IoCheckmarkDoneCircleOutline />, 
-        });
-      }else{
-        toast("Invalid Credentials!", {
-          className: "border-red-500 text-base",
           description: data?.message,
           duration: 3000,
-          icon: <IoCloseCircleOutline />,
-          });
-      }
-      
-      setCookie(null, "accessToken", data.token, { path: "/" }); // Save token as a cookie
-      setForm({ email: "", password: "" });
-      router.push("/"); // Redirect to home page after login
-    } catch (err: any) {
-        setError(err.message);
-        toast("Login Failed!", {
-          className: "border-red-500 text-base",
-          description: err?.message, 
-          duration: 3000,
-          icon: <IoCloseCircleOutline />, 
+          icon: <IoCheckmarkDoneCircleOutline />,
         });
+        router.push("/"); // Redirect to home page
+      } else {
+        toast("Invalid Credentials!", {
+          className: "border-red-500 text-base",
+          description: data?.message || "User not found!",
+          duration: 3000,
+          icon: <IoCloseCircleOutline />,
+        });
+      }
+    } catch (err: any) {
+      setError(err.message);
+      toast("Login Failed!", {
+        className: "border-red-500 text-base",
+        description: err?.message,
+        duration: 3000,
+        icon: <IoCloseCircleOutline />,
+      });
     } finally {
       setLoading(false);
     }
@@ -58,31 +72,27 @@ const LoginForm = () => {
 
   return (
     <form
-    className="flex flex-col space-y-4 py-10 md:w-8/12 mx-auto"
-    onSubmit={handleSubmit}>
+      className="flex flex-col space-y-4 py-10 md:w-8/12 mx-auto"
+      onSubmit={handleSubmit}
+    >
       <Input
-        name="email"
-        label="Email"
-        type="email"
         fullWidth
         required
+        label="Email"
+        name="email"
+        type="email"
         onChange={handleInputChange}
-        className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-      
       />
       <Input
-        name="password"
-        label="Password"
-        type="password"
         fullWidth
         required
+        label="Password"
+        name="password"
+        type="password"
         onChange={handleInputChange}
-         className="w-full rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <Button
-      className="w-1/6  mx-auto"
-      type="submit" disabled={loading}>
+      <Button className="w-1/6 mx-auto" disabled={loading} type="submit">
         {loading ? "Logging..." : "Login"}
       </Button>
     </form>
