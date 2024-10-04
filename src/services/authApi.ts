@@ -8,6 +8,9 @@ import {
   ApiError,
   AuthResponse,
   LoginPayload,
+  PassResponse,
+  PasswordChangePayload,
+  PasswordRecoveryPayload,
   RegisterPayload,
 } from "../types";
 
@@ -42,6 +45,42 @@ export const loginUser = async (data: LoginPayload) => {
     const errorAsError: ApiError = error as Error;
 
     throw new Error(errorAsError.response?.data?.message || "Login failed");
+  }
+};
+
+// Function to recover password
+export const recoverPassword = async (data: PasswordRecoveryPayload) => {
+  try {
+    const response = await nexiosInstance.post<PassResponse>(
+      "/auth/recover-password",
+      data,
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorAsError: ApiError = error as Error;
+
+    throw new Error(
+      errorAsError.response?.data?.message || "Password recover failed",
+    );
+  }
+};
+
+// Function to change password
+export const changePassword = async (data: PasswordChangePayload) => {
+  try {
+    const response = await nexiosInstance.post<PassResponse>(
+      "/auth/change-password",
+      data,
+    );
+
+    return response.data;
+  } catch (error) {
+    const errorAsError: ApiError = error as Error;
+
+    throw new Error(
+      errorAsError.response?.data?.message || "Password change failed",
+    );
   }
 };
 

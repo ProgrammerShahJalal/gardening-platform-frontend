@@ -120,3 +120,25 @@ export interface AuthResponse {
     profilePicture?: string;
   };
 }
+
+//Define password recovery request payload types
+export interface PasswordRecoveryPayload {
+  email: string;
+  answer1: string;
+  answer2: string;
+  newPass: string;
+}
+//Define password change request payload types
+export interface PasswordChangePayload {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}
+
+// Define the password response types
+export interface PassResponse {
+  success: boolean;
+  message: string;
+  statusCode: number;
+  data: {};
+}
