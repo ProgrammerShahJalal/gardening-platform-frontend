@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Input, Button, Card } from "@nextui-org/react";
 import nexiosHttp from "nexios-http";

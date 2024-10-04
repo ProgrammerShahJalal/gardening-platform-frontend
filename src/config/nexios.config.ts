@@ -2,9 +2,11 @@ import { Nexios } from "nexios-http";
 import { NexiosOptions } from "nexios-http/types/interfaces";
 import Cookies from "js-cookie";
 
+import envConfig from "./envConfig";
+
 // Default configuration for Nexios
 const defaultConfig: NexiosOptions = {
-  baseURL: "https://gardening-platform-backend-delta.vercel.app/api/v1",
+  baseURL: envConfig.baseUrl,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

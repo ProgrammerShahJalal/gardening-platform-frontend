@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   IoCheckmarkDoneCircleOutline,
   IoCloseCircleOutline,
@@ -17,6 +17,11 @@ const LoginForm = () => {
   const [error, setError] = useState<string | null>(null);
   const { login } = useAuth(); // Access login function from AuthContext
   const router = useRouter();
+
+  const searchParams = useSearchParams(); // Get the search parameters from the URL
+
+  // Get the "redirect" parameter from the URL if it exists
+  const redirectUrl = searchParams.get("redirect") || "/"; // Default to home page if no redirect
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,7 +53,7 @@ const LoginForm = () => {
           duration: 3000,
           icon: <IoCheckmarkDoneCircleOutline />,
         });
-        router.push("/"); // Redirect to home page
+        router.push(redirectUrl);
       } else {
         toast("Invalid Credentials!", {
           className: "border-red-500 text-base",

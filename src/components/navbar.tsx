@@ -27,7 +27,7 @@ import { useAuth } from "../context/AuthContext";
 import { ThemeSwitch } from "@/src/components/theme-switch";
 import { siteConfig } from "@/src/config/site";
 
-export const Navbar: React.FC = async () => {
+export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (

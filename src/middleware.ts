@@ -1,58 +1,53 @@
+import type { NextRequest } from "next/server";
+
 import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
 
-import nexiosInstance from "./config/nexios.config";
-import { ProfileResponse } from "./types";
+import { getCurrentUser } from "./services/authApi";
 
+// Routes that unauthenticated users can access
 const AuthRoutes = ["/login", "/register"];
 
-type Role = keyof typeof roleBasedRoutes;
-
+// Role-based route permissions
 const roleBasedRoutes = {
   user: [/^\/profile/],
   admin: [/^\/admin/],
 };
 
-// This function can be marked `async` if using `await` inside
+type Role = keyof typeof roleBasedRoutes;
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const { data } = await nexiosInstance.get<ProfileResponse>("/profile/me", {
-    cache: "no-store",
-    next: {},
-  });
+  const user = await getCurrentUser();
 
-  const user = data?.data;
-
+  // If user is not logged in
   if (!user) {
+    // Allow access to login and register pages
     if (AuthRoutes.includes(pathname)) {
       return NextResponse.next();
     } else {
+      // Redirect to login with a redirect URL
       return NextResponse.redirect(
         new URL(`/login?redirect=${pathname}`, request.url),
       );
     }
   }
 
+  // Role-based access control
   if (user?.role && roleBasedRoutes[user?.role as Role]) {
-    const routes = roleBasedRoutes[user?.role as Role];
+    const allowedRoutes = roleBasedRoutes[user?.role as Role];
 
-    if (routes.some((route) => pathname.match(route))) {
-      return NextResponse.next();
+    // Check if user is allowed to access the current route
+    if (allowedRoutes.some((route) => pathname.match(route))) {
+      return NextResponse.next(); // Allow access
     }
   }
 
+  // Redirect to the homepage if the user doesn't have permission
   return NextResponse.redirect(new URL("/", request.url));
 }
 
-// See "Matching Paths" below to learn more
+// Matching paths for the middleware to apply on
 export const config = {
-  matcher: [
-    "/profile",
-    "/profile/:page*",
-    "/admin",
-    "/admin/:page*",
-    "/login",
-    "/register",
-  ],
+  matcher: ["/profile", "/profile/:page*", "/admin",],
 };

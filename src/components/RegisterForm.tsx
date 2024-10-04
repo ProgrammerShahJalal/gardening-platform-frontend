@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import {
   IoCheckmarkDoneCircleOutline,
@@ -27,6 +27,11 @@ const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  const searchParams = useSearchParams(); // Get the search parameters from the URL
+
+  // Get the "redirect" parameter from the URL if it exists
+  const redirectUrl = searchParams.get("redirect") || "/login"; // Default to login page if no redirect
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -57,7 +62,7 @@ const RegisterForm = () => {
         ...defaultFormValues,
       });
 
-      router.push("/login");
+      router.push(redirectUrl);
     } catch (err: any) {
       setError(err.message);
       toast("Signup Failed!", {
