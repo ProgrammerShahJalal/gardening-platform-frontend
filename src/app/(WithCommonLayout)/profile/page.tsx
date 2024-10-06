@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Avatar, Button, Input, Tabs, Tab } from "@nextui-org/react";
+import { Avatar, Button, Input, Tabs, Tab, Badge } from "@nextui-org/react";
 import { toast } from "sonner";
 import {
   IoCheckmarkDoneCircleOutline,
@@ -122,18 +122,34 @@ const ProfilePage: React.FC = () => {
   // Function to close modal
   const handleCloseModal = () => setIsModalOpen(false);
 
-
+console.log("user from profile=> ", currentUser);
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Profile Header */}
       <div className="flex flex-col items-center">
-        <Avatar
+        {
+          currentUser?.isVerified ? <Badge 
+          content=" Verified ✔"   
+          color="danger" 
+          placement="top-right">
+            <Avatar
           alt="Profile Picture"
           className="w-20 h-20 text-large rounded-full border-2 border-secondary shadow-md"
           src={currentUser?.profilePicture}
         />
+          </Badge> : <Avatar
+          alt="Profile Picture"
+          className="w-20 h-20 text-large rounded-full border-2 border-secondary shadow-md"
+          src={currentUser?.profilePicture}
+        />
+        }
+        
         <div className="text-center mt-4">
-          <h1 className={title()}>{currentUser?.name}</h1>✔ Verified
+          <h1 className={title()}>{currentUser?.name}</h1>
+          <p className="text-gray-600">{currentUser?.phone}</p>
+          <p className="text-gray-600">{currentUser?.email}</p>
+          <p className="text-gray-600">{currentUser?.address}</p>
+
         </div>
         {currentUser && (
           <div className="flex gap-4 mt-4">

@@ -58,7 +58,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         }
       } catch (error: any) {
         console.error('API Error:', error?.response?.data || error.message || 'Something went wrong'); 
-        toast('Profile update failed', {
+        toast('Profile updated failed', {
           description: error.response?.data?.message || 'Something went wrong',
           icon: <IoCloseCircleOutline />,
         });
