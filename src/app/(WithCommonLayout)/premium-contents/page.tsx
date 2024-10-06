@@ -4,6 +4,7 @@ import { title } from "@/src/components/primitives";
 import nexiosInstance from "@/src/config/nexios.config";
 import { Post, Posts } from "@/src/types";
 
+
 const PremiumContentsPage = async () => {
   const { data } = await nexiosInstance.get<Posts>("/post", {
     cache: "no-store",

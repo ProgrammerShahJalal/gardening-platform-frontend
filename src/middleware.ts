@@ -11,38 +11,52 @@ const roleBasedRoutes = {
   admin: [/^\/admin/],
 };
 
+// Role type based on the role-based routes
 type Role = keyof typeof roleBasedRoutes;
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-
+  // Fetch the current user details
   const user = await getCurrentUser();
 
-  // If user is not logged in
+  // If the user is not logged in
   if (!user?.role) {
     // Allow access to login and register pages
     if (AuthRoutes.includes(pathname)) {
       return NextResponse.next();
     } else {
-      // Redirect to login with a redirect URL
+      // Redirect to login with the redirect URL
       return NextResponse.redirect(
-        new URL(`/login?redirect=${pathname}`, request.url),
+        new URL(`/login?redirect=${pathname}`, request.url)
       );
     }
   }
 
-  // Role-based access control
-  if (user?.role && roleBasedRoutes[user?.role as Role]) {
-    const allowedRoutes = roleBasedRoutes[user?.role as Role];
+  // Check for role-based access control
+  if (user?.role && roleBasedRoutes[user.role as Role]) {
+    const allowedRoutes = roleBasedRoutes[user.role as Role];
 
-    // Check if user is allowed to access the current route
+    // Allow the user if they are permitted to access this route
     if (allowedRoutes.some((route) => pathname.match(route))) {
-      return NextResponse.next(); // Allow access
+      return NextResponse.next();
     }
   }
 
-  // Redirect to the homepage if the user doesn't have permission
+  // Special case for accessing premium contents
+  if (pathname === "/premium-contents") {
+    // Check if the user is verified to access premium content
+    if (user?.isVerified) {
+      return NextResponse.next(); // Allow access
+    } else {
+      // Redirect to a page indicating verification is required
+      return NextResponse.redirect(
+        new URL("/profile", request.url)
+      );
+    }
+  }
+
+  // Redirect to homepage if the user doesn't have permission
   return NextResponse.redirect(new URL("/", request.url));
 }
 

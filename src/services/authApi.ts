@@ -11,6 +11,7 @@ import {
   PassResponse,
   PasswordChangePayload,
   PasswordRecoveryPayload,
+  ProfileResponse,
   RegisterPayload,
 } from "../types";
 
@@ -84,24 +85,31 @@ export const changePassword = async (data: PasswordChangePayload) => {
   }
 };
 
+// Function to get the current user profile from the server
 export const getCurrentUser = async () => {
   const accessToken = cookies().get("accessToken")?.value;
 
-  let decodedToken = null;
-
-  if (accessToken) {
-    decodedToken = await jwtDecode(accessToken);
-
-    return {
-      _id: decodedToken._id,
-      name: decodedToken.name,
-      email: decodedToken.email,
-      phone: decodedToken.phone,
-      address: decodedToken.address,
-      role: decodedToken.role,
-      profilePicture: decodedToken.profilePicture,
-    };
+  if (!accessToken) {
+    throw new Error("No access token found. Please log in.");
   }
 
-  return decodedToken;
+  try {
+    // Make a GET request to the /profile/me endpoint
+    const response = await nexiosInstance.get<ProfileResponse>("/profile/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      throw new Error("Failed to fetch user profile");
+    }
+  } catch (error) {
+    const errorAsError: ApiError = error as Error;
+    throw new Error(
+      errorAsError.response?.data?.message || "Failed to get current user"
+    );
+  }
 };
