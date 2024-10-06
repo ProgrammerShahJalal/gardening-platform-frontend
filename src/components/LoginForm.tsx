@@ -39,7 +39,9 @@ const LoginForm = () => {
         const user: LoginUserInfo = {
           _id: data?.data?._id,
           name: data?.data?.name,
+          phone: data?.data?.phone,
           email: data?.data?.email,
+          address: data?.data?.address,
           role: data?.data?.role,
           profilePicture: data?.data?.profilePicture,
         };

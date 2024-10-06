@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { Avatar, Button, Input, Tabs, Tab } from "@nextui-org/react";
-import NextLink from "next/link";
 import { toast } from "sonner";
 import {
   IoCheckmarkDoneCircleOutline,
@@ -12,10 +11,11 @@ import {
 import { title } from "@/src/components/primitives";
 import { useAuth } from "@/src/context/AuthContext";
 import { recoverPassword, changePassword } from "@/src/services/authApi";
-import { ApiError } from "@/src/types";
+import { ApiError, PResponse } from "@/src/types";
+import ProfileModal from "@/src/components/ProfileModal";
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user} = useAuth();
 
   const [answer1, setAnswer1] = useState("");
   const [answer2, setAnswer2] = useState("");
@@ -25,6 +25,10 @@ const ProfilePage: React.FC = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [changeLoading, setChangeLoading] = useState(false);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const currentUser = user?.data ? user?.data : user;
 
   // Handle password recovery
   const handleRecoverPassword = async () => {
@@ -44,6 +48,10 @@ const ProfilePage: React.FC = () => {
           duration: 3000,
           icon: <IoCheckmarkDoneCircleOutline />,
         });
+        // Reset the input fields
+        setAnswer1("");
+        setAnswer2("");
+        setNewPass("");
       } else {
         toast("Recover failed!", {
           className: "border-red-500 text-base",
@@ -83,6 +91,9 @@ const ProfilePage: React.FC = () => {
           duration: 3000,
           icon: <IoCheckmarkDoneCircleOutline />,
         });
+        // Reset the input fields
+        setOldPassword("");
+        setNewPassword("");
       } else {
         toast("Change failed!", {
           className: "border-red-500 text-base",
@@ -105,6 +116,13 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  // Function to open modal
+  const handleEditProfile = () => setIsModalOpen(true);
+
+  // Function to close modal
+  const handleCloseModal = () => setIsModalOpen(false);
+
+
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Profile Header */}
@@ -112,24 +130,37 @@ const ProfilePage: React.FC = () => {
         <Avatar
           alt="Profile Picture"
           className="w-20 h-20 text-large rounded-full border-2 border-secondary shadow-md"
-          src={user?.profilePicture}
+          src={currentUser?.profilePicture}
         />
         <div className="text-center mt-4">
-          <h1 className={title()}>{user?.name}</h1>✔ Verified
+          <h1 className={title()}>{currentUser?.name}</h1>✔ Verified
         </div>
-        <div className="flex gap-4 mt-4">
-          <NextLink href="/profile/edit">
-            <Button color="primary" size="sm">
-              Edit Profile
-            </Button>
-          </NextLink>
-          Verify Profile
-        </div>
+        {currentUser && (
+          <div className="flex gap-4 mt-4">
+          <Button color="primary" size="sm" onClick={handleEditProfile}>
+            Edit Profile
+          </Button>
       </div>
+        )}
+      </div>
+
+      {/* Modal for editing profile */}
+      {currentUser && (
+        <ProfileModal
+        initialData={{
+          name: currentUser?.name,
+          phone: currentUser?.phone,
+          address: currentUser?.address,
+          profilePicture: currentUser?.profilePicture,
+        }}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+      )}
 
       {/* Parallax Tabs */}
       <div className="mt-10">
-        <Tabs className="w-full" variant="solid">
+        <Tabs className="w-full" color="primary" variant="solid">
           <Tab key="posts" title="My Posts">
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {/* Render user's posts here */}
@@ -141,52 +172,53 @@ const ProfilePage: React.FC = () => {
             </div>
           </Tab>
           <Tab key="changePassword" title="Change Password">
-            <div className="mt-4">
-              <div className="flex flex-col gap-4">
-                <Input
-                  label="Old Password"
-                  type="password"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                />
-                <Input
-                  label="New Password"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <Button disabled={changeLoading} onClick={handleChangePassword}>
-                  {changeLoading ? "Changing..." : "Change Password"}
-                </Button>
-              </div>
+            <div className="mt-4 flex flex-col gap-4 max-w-sm mx-auto sm:max-w-md lg:max-w-lg">
+              <Input
+                label="Old Password"
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+              <Input
+                label="New Password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <Button
+                color="primary"
+                disabled={changeLoading}
+                onClick={handleChangePassword}
+              >
+                {changeLoading ? "Changing..." : "Change Password"}
+              </Button>
             </div>
           </Tab>
           <Tab key="recoverPassword" title="Recover Password">
-            <div className="mt-4">
-              <div className="flex flex-col gap-4">
-                <Input
-                  label="Answer 1: In what city and state were you born?"
-                  value={answer1}
-                  onChange={(e) => setAnswer1(e.target.value)}
-                />
-                <Input
-                  label="Answer 2: What is your favorite childhood toy?"
-                  value={answer2}
-                  onChange={(e) => setAnswer2(e.target.value)}
-                />
-                <Input
-                  label="New Password"
-                  type="password"
-                  value={newPass}
-                  onChange={(e) => setNewPass(e.target.value)}
-                />
-                <Button
-                  disabled={recoverLoading}
-                  onClick={handleRecoverPassword}
-                >
-                  {recoverLoading ? "Recovering..." : "Recover Password"}
-                </Button>
-              </div>
+            <div className="mt-4 flex flex-col gap-4 max-w-sm mx-auto sm:max-w-md lg:max-w-lg">
+              <Input
+                label="Answer 1: In what city and state were you born?"
+                value={answer1}
+                onChange={(e) => setAnswer1(e.target.value)}
+              />
+              <Input
+                label="Answer 2: What is your favorite childhood toy?"
+                value={answer2}
+                onChange={(e) => setAnswer2(e.target.value)}
+              />
+              <Input
+                label="New Password"
+                type="password"
+                value={newPass}
+                onChange={(e) => setNewPass(e.target.value)}
+              />
+              <Button
+                color="primary"
+                disabled={recoverLoading}
+                onClick={handleRecoverPassword}
+              >
+                {recoverLoading ? "Recovering..." : "Recover Password"}
+              </Button>
             </div>
           </Tab>
         </Tabs>

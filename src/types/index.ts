@@ -73,6 +73,12 @@ export interface Profile {
   following: Follower[];
   isVerified: boolean;
 }
+export interface ProfileUpdate {
+  name?: string;
+  phone?: string;
+  address?: string;
+  profilePicture?: string;
+}
 
 // Define the API response structure
 export interface ProfileResponse {
@@ -82,11 +88,31 @@ export interface ProfileResponse {
   data: Profile;
 }
 
-// Define the login user info types
-export interface LoginUserInfo {
+export interface PResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: PUserInfo;
+}
+
+export interface PUserInfo {
   _id: string;
   name: string;
+  phone?: string;
   email: string;
+  address?: string;
+  role: string;
+  profilePicture: string;
+}
+
+// Define the login user info types
+export interface LoginUserInfo {
+  [x: string]: any;
+  _id: string;
+  name: string;
+  phone?: string;
+  email: string;
+  address?: string;
   role: string;
   profilePicture?: string;
 }
@@ -115,6 +141,8 @@ export interface AuthResponse {
   data: {
     _id: string;
     name: string;
+    phone?: string;
+    address?: string;
     email: string;
     role: string;
     profilePicture?: string;

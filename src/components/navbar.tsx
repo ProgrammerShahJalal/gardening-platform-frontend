@@ -26,9 +26,12 @@ import { useAuth } from "../context/AuthContext";
 
 import { ThemeSwitch } from "@/src/components/theme-switch";
 import { siteConfig } from "@/src/config/site";
+import { PResponse } from "../types";
 
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
+
+  const currentUser = user?.data ? user?.data : user;
 
   return (
     <NextUINavbar maxWidth="xl" position="sticky">
@@ -71,15 +74,15 @@ export const Navbar: React.FC = () => {
               color="secondary"
               name="profilePicture"
               size="sm"
-              src={user?.profilePicture}
+              src={currentUser?.profilePicture}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="email" className="h-14 gap-2">
-              {user?.email ? (
+              {currentUser?.email ? (
                 <>
                   <p className="font-semibold">Signed in as</p>
-                  <p className="font-semibold">{user?.email}</p>
+                  <p className="font-semibold">{currentUser?.email}</p>
                 </>
               ) : (
                 <>
@@ -89,7 +92,7 @@ export const Navbar: React.FC = () => {
               )}
             </DropdownItem>
 
-            {user ? (
+            {currentUser ? (
               <>
                 <DropdownItem key="profile" color="primary" href="/profile">
                   Profile

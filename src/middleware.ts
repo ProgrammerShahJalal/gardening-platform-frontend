@@ -1,7 +1,5 @@
 import type { NextRequest } from "next/server";
-
 import { NextResponse } from "next/server";
-
 import { getCurrentUser } from "./services/authApi";
 
 // Routes that unauthenticated users can access
@@ -18,10 +16,11 @@ type Role = keyof typeof roleBasedRoutes;
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+
   const user = await getCurrentUser();
 
   // If user is not logged in
-  if (!user) {
+  if (!user?.role) {
     // Allow access to login and register pages
     if (AuthRoutes.includes(pathname)) {
       return NextResponse.next();
@@ -49,5 +48,5 @@ export async function middleware(request: NextRequest) {
 
 // Matching paths for the middleware to apply on
 export const config = {
-  matcher: ["/profile", "/profile/:page*", "/admin",],
+  matcher: ["/profile", "/profile/:page*", "/admin", "/premium-contents"],
 };
