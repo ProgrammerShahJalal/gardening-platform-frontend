@@ -3,6 +3,7 @@ import { NexiosOptions } from "nexios-http/types/interfaces";
 import Cookies from "js-cookie";
 
 import envConfig from "./envConfig";
+import { cookies } from "next/headers";
 
 // Default configuration for Nexios
 const defaultConfig: NexiosOptions = {
@@ -19,7 +20,7 @@ const nexiosInstance = new Nexios(defaultConfig);
 
 // Add request interceptor to include token
 nexiosInstance.interceptors.request.use((config) => {
-  const accessToken = Cookies.get("accessToken");
+  const accessToken = cookies().get("accessToken")?.value;
 
   if (accessToken) {
     config.headers = {
@@ -27,7 +28,6 @@ nexiosInstance.interceptors.request.use((config) => {
       Authorization: `Bearer ${accessToken}`, // Include token in Authorization header
     };
   }
-
   return config;
 });
 

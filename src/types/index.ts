@@ -26,7 +26,12 @@ export interface Post {
   _id: string;
   title: string;
   content: string;
-  author: string;
+  author: {
+    _id: string;
+    name: string;
+    email: string;
+    profilePicture: string;
+  };
   category: string;
   tags: string[];
   images: string[];
@@ -37,6 +42,8 @@ export interface Post {
   upvotes: string[]; // Array of user IDs who upvoted the post
   downvotes: string[]; // Array of user IDs who downvoted the post
   comments: Comment[];
+  data: Post[];
+  message: string;
 }
 
 export interface Posts {
@@ -45,8 +52,12 @@ export interface Posts {
 
 // Response structure from the API
 export interface PostResponse {
-  data: Post;
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Post[];
 }
+
 
 export interface ApiError extends Error {
   response?: {

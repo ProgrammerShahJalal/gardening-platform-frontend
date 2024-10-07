@@ -1,8 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
-
 import nexiosInstance from "../config/nexios.config";
 import {
   ApiError,
@@ -20,7 +18,7 @@ export const registerUser = async (data: RegisterPayload) => {
   try {
     const response = await nexiosInstance.post<AuthResponse>(
       "/auth/register",
-      data,
+      data
     );
 
     return response.data;
@@ -28,7 +26,7 @@ export const registerUser = async (data: RegisterPayload) => {
     const errorAsError: ApiError = error as Error;
 
     throw new Error(
-      errorAsError.response?.data?.message || "Registration failed",
+      errorAsError.response?.data?.message || "Registration failed"
     );
   }
 };
@@ -38,7 +36,7 @@ export const loginUser = async (data: LoginPayload) => {
   try {
     const response = await nexiosInstance.post<AuthResponse>(
       "/auth/login",
-      data,
+      data
     );
 
     return response.data;
@@ -54,7 +52,7 @@ export const recoverPassword = async (data: PasswordRecoveryPayload) => {
   try {
     const response = await nexiosInstance.post<PassResponse>(
       "/auth/recover-password",
-      data,
+      data
     );
 
     return response.data;
@@ -62,7 +60,7 @@ export const recoverPassword = async (data: PasswordRecoveryPayload) => {
     const errorAsError: ApiError = error as Error;
 
     throw new Error(
-      errorAsError.response?.data?.message || "Password recover failed",
+      errorAsError.response?.data?.message || "Password recover failed"
     );
   }
 };
@@ -72,7 +70,7 @@ export const changePassword = async (data: PasswordChangePayload) => {
   try {
     const response = await nexiosInstance.post<PassResponse>(
       "/auth/change-password",
-      data,
+      data
     );
 
     return response.data;
@@ -80,7 +78,7 @@ export const changePassword = async (data: PasswordChangePayload) => {
     const errorAsError: ApiError = error as Error;
 
     throw new Error(
-      errorAsError.response?.data?.message || "Password change failed",
+      errorAsError.response?.data?.message || "Password change failed"
     );
   }
 };

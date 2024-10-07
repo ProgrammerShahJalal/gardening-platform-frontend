@@ -13,6 +13,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { recoverPassword, changePassword } from "@/src/services/authApi";
 import { ApiError, PResponse } from "@/src/types";
 import ProfileModal from "@/src/components/ProfileModal";
+import MyPosts from "./_components/MyPosts";
 
 const ProfilePage: React.FC = () => {
   const { user} = useAuth();
@@ -122,7 +123,6 @@ const ProfilePage: React.FC = () => {
   // Function to close modal
   const handleCloseModal = () => setIsModalOpen(false);
 
-console.log("user from profile=> ", currentUser);
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Profile Header */}
@@ -178,9 +178,8 @@ console.log("user from profile=> ", currentUser);
       <div className="mt-10">
         <Tabs className="w-full" color="primary" variant="solid">
           <Tab key="posts" title="My Posts">
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Render user's posts here */}
-            </div>
+              {/* My Posts  */}
+                <MyPosts/>
           </Tab>
           <Tab key="followers" title="Followers 10">
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

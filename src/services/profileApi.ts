@@ -1,3 +1,4 @@
+"use server";
 
 import axiosInstance from "../config/axios.config";
 import { ProfileResponse, ApiError, ProfileUpdate } from "../types";
