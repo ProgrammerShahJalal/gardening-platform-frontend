@@ -44,7 +44,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     Cookies.set("accessToken", token);
     Cookies.set("user", JSON.stringify(userData));
     setUser(userData);
-
     try {
       const latestUserProfile = await fetchUserProfile();
       if (latestUserProfile) {

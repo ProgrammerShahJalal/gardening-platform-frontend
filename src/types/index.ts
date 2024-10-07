@@ -58,7 +58,6 @@ export interface PostResponse {
   data: Post[];
 }
 
-
 export interface ApiError extends Error {
   response?: {
     data?: {
@@ -78,25 +77,28 @@ export interface Profile {
   _id: string;
   name: string;
   email: string;
-  role: string;
-  profilePicture: string;
-  followers: Follower[];
-  following: Follower[];
-  isVerified: boolean;
-}
-export interface ProfileUpdate {
-  name?: string;
   phone?: string;
   address?: string;
+  role: string;
   profilePicture?: string;
+  followers: string[];
+  following: string[];
+  isVerified: boolean;
+  favourites: string[];
 }
-
 // Define the API response structure
 export interface ProfileResponse {
   success: boolean;
   statusCode: number;
   message: string;
   data: Profile;
+}
+
+export interface ProfileUpdate {
+  name?: string;
+  phone?: string;
+  address?: string;
+  profilePicture?: string;
 }
 
 export interface PResponse {

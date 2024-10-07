@@ -48,3 +48,18 @@ export const downvotePost = async (postId: string) => {
     throw new Error("Failed to downvote the post");
   }
 };
+// Function to toggle favourite a post (add/remove in favourites post list)
+export const toggleFavouritePost = async (postId: string) => {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("User not logged in");
+
+  try {
+    const response = await nexiosInstance.post<PostResponse>(
+      `/post/favourites/${postId}`,
+      {}
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to toggle favourite the post");
+  }
+};
