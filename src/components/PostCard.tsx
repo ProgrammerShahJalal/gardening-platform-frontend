@@ -21,9 +21,13 @@ import {
   IoCloseCircleOutline,
 } from "react-icons/io5";
 import { getCurrentUser } from "../services/authApi";
-import CommentsModal from "./CommentsModal";
+import PostDetailModal from "./PostDetailModal";
 
-const PostCard = ({ post }: { post: Post }) => {
+interface PostCardProps {
+  post: Post;
+}
+
+const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [upvotes, setUpvotes] = useState(post?.upvotes?.length);
   const [downvotes, setDownvotes] = useState(post?.downvotes?.length);
   const [isUpvoted, setIsUpvoted] = useState(false);
@@ -31,11 +35,13 @@ const PostCard = ({ post }: { post: Post }) => {
   const [isFavourite, setIsFavourite] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Function to open modal
-  const handleOpenModal = () => setIsModalOpen(true);
+  const handlePostClick = (post: Post) => {
+    setIsModalOpen(true);
+  };
 
-  // Function to close modal
-  const handleCloseModal = () => setIsModalOpen(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   // Fetch the user profile to check favourites
   useEffect(() => {
@@ -59,7 +65,8 @@ const PostCard = ({ post }: { post: Post }) => {
     getUserProfile();
   }, [post._id]);
 
-  const handleUpvote = async () => {
+  const handleUpvote = async (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent click from propagating to the card body
     try {
       const response = await upvotePost(post._id);
       if (response?.success) {
@@ -92,7 +99,8 @@ const PostCard = ({ post }: { post: Post }) => {
     }
   };
 
-  const handleDownvote = async () => {
+  const handleDownvote = async (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent click from propagating to the card body
     try {
       const response = await downvotePost(post._id);
       if (response?.success) {
@@ -125,7 +133,8 @@ const PostCard = ({ post }: { post: Post }) => {
     }
   };
 
-  const handleToggleFavourite = async () => {
+  const handleToggleFavourite = async (event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent click from propagating to the card body
     try {
       const response = await toggleFavouritePost(post._id);
       if (response?.statusCode === 200) {
@@ -176,7 +185,12 @@ const PostCard = ({ post }: { post: Post }) => {
         </div>
         <CardHeader>
           <div className="flex flex-col justify-start items-start">
-            <h4 className="text-lg text-center font-semibold">{post?.title}</h4>
+            <h4
+              onClick={() => handlePostClick(post)}
+              className="text-lg text-center font-semibold cursor-pointer"
+            >
+              {post?.title}
+            </h4>
             <div className="flex flex-wrap justify-start items-center gap-2">
               {post?.tags?.map((tag) => (
                 <Chip key={tag} color="success" variant="bordered" size="sm">
@@ -194,7 +208,10 @@ const PostCard = ({ post }: { post: Post }) => {
             </div>
           </div>
         </CardHeader>
-        <CardBody>
+        <CardBody
+          onClick={() => handlePostClick(post)}
+          className="cursor-pointer"
+        >
           <Image
             src={post?.images[0]}
             alt={post?.title}
@@ -204,6 +221,13 @@ const PostCard = ({ post }: { post: Post }) => {
           <p className="mt-3 dark:text-gray-100 text-gray-800">
             {post?.content.slice(0, 30)}...
           </p>
+          {post && (
+            <PostDetailModal
+              post={post}
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+            />
+          )}
         </CardBody>
         <CardFooter>
           <div className="w-[96%] mx-auto flex justify-center items-center gap-12 mb-2">
@@ -224,23 +248,13 @@ const PostCard = ({ post }: { post: Post }) => {
             <div className="cursor-pointer" onClick={handleToggleFavourite}>
               <BiHeart size={20} color={isFavourite ? "red" : ""} />
             </div>
-            <div
-              className="grid grid-cols-2 gap-1 justify-center items-end cursor-pointer"
-              onClick={handleOpenModal}
-            >
+            <div className="grid grid-cols-2 gap-1 justify-center items-end">
               <BiCommentDetail size={20} />
               <small className="text-base">{post?.comments?.length}</small>
             </div>
           </div>
         </CardFooter>
       </Card>
-      {post?.comments?.map((comment) => (
-        <CommentsModal
-          comment={comment}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
-      ))}
     </>
   );
 };
