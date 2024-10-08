@@ -21,6 +21,7 @@ import {
   IoCloseCircleOutline,
 } from "react-icons/io5";
 import { getCurrentUser } from "../services/authApi";
+import CommentsModal from "./CommentsModal";
 
 const PostCard = ({ post }: { post: Post }) => {
   const [upvotes, setUpvotes] = useState(post?.upvotes?.length);
@@ -28,6 +29,13 @@ const PostCard = ({ post }: { post: Post }) => {
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [isDownvoted, setIsDownvoted] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Function to open modal
+  const handleOpenModal = () => setIsModalOpen(true);
+
+  // Function to close modal
+  const handleCloseModal = () => setIsModalOpen(false);
 
   // Fetch the user profile to check favourites
   useEffect(() => {
@@ -145,82 +153,95 @@ const PostCard = ({ post }: { post: Post }) => {
   };
 
   return (
-    <Card key={post._id} className="w-[350px] mx-auto">
-      <div className="flex justify-between items-center">
-        <div className="flex justify-start items-center">
-          <Avatar
-            className="m-3"
-            src={post?.author?.profilePicture}
-            size="sm"
-          />
-          <p className="text-gray-600 dark:text-gray-100 text-sm">
-            {post?.author?.name}
-          </p>
+    <>
+      <Card key={post?._id} className="w-[350px] mx-auto">
+        <div className="flex justify-between items-center">
+          <div className="flex justify-start items-center">
+            <Avatar
+              className="m-3"
+              src={post?.author?.profilePicture}
+              size="sm"
+            />
+            <p className="text-gray-600 dark:text-gray-100 text-sm">
+              {post?.author?.name}
+            </p>
+          </div>
+          {post?.isPremium && (
+            <Image
+              src="/diamond.gif"
+              alt="Premium Post"
+              className="m-3 w-7 h-7"
+            />
+          )}
         </div>
-        {post?.isPremium && (
+        <CardHeader>
+          <div className="flex flex-col justify-start items-start">
+            <h4 className="text-lg text-center font-semibold">{post?.title}</h4>
+            <div className="flex flex-wrap justify-start items-center gap-2">
+              {post?.tags?.map((tag) => (
+                <Chip key={tag} color="success" variant="bordered" size="sm">
+                  {tag}
+                </Chip>
+              ))}
+            </div>
+            <div className="grid grid-flow-row grid-cols-2 justify-between items-center gap-2 mt-2">
+              <small className="text-gray-600 dark:text-gray-100">
+                Category: {post?.category}
+              </small>
+              <small className="text-gray-600 dark:text-gray-100">
+                Created at: {new Date(post?.createdAt).toLocaleDateString()}
+              </small>
+            </div>
+          </div>
+        </CardHeader>
+        <CardBody>
           <Image
-            src="/diamond.gif"
-            alt="Premium Post"
-            className="m-3 w-7 h-7"
+            src={post?.images[0]}
+            alt={post?.title}
+            className="object-cover mt-3 pl-2 rounded-xl"
+            width={320}
           />
-        )}
-      </div>
-      <CardHeader>
-        <div className="flex flex-col justify-start items-start">
-          <h4 className="text-lg text-center font-semibold">{post.title}</h4>
-          <div className="flex flex-wrap justify-start items-center gap-2">
-            {post?.tags?.map((tag) => (
-              <Chip key={tag} color="success" variant="bordered" size="sm">
-                {tag}
-              </Chip>
-            ))}
+          <p className="mt-3 dark:text-gray-100 text-gray-800">
+            {post?.content.slice(0, 30)}...
+          </p>
+        </CardBody>
+        <CardFooter>
+          <div className="w-[96%] mx-auto flex justify-center items-center gap-12 mb-2">
+            <div
+              className="grid grid-cols-2 gap-1 justify-center items-end cursor-pointer"
+              onClick={handleUpvote}
+            >
+              <BiUpvote size={20} color={isUpvoted ? "green" : ""} />
+              <small className="text-base">{upvotes}</small>
+            </div>
+            <div
+              className="grid grid-cols-2 gap-1 justify-center items-end cursor-pointer"
+              onClick={handleDownvote}
+            >
+              <BiDownvote size={20} color={isDownvoted ? "red" : ""} />
+              <small className="text-base">{downvotes}</small>
+            </div>
+            <div className="cursor-pointer" onClick={handleToggleFavourite}>
+              <BiHeart size={20} color={isFavourite ? "red" : ""} />
+            </div>
+            <div
+              className="grid grid-cols-2 gap-1 justify-center items-end cursor-pointer"
+              onClick={handleOpenModal}
+            >
+              <BiCommentDetail size={20} />
+              <small className="text-base">{post?.comments?.length}</small>
+            </div>
           </div>
-          <div className="grid grid-flow-row grid-cols-2 justify-between items-center gap-2 mt-2">
-            <small className="text-gray-600 dark:text-gray-100">
-              Category: {post.category}
-            </small>
-            <small className="text-gray-600 dark:text-gray-100">
-              Created at: {new Date(post.createdAt).toLocaleDateString()}
-            </small>
-          </div>
-        </div>
-      </CardHeader>
-      <CardBody>
-        <Image
-          src={post?.images[0]}
-          alt={post.title}
-          className="object-cover mt-3 pl-2 rounded-xl"
-          width={320}
+        </CardFooter>
+      </Card>
+      {post?.comments?.map((comment) => (
+        <CommentsModal
+          comment={comment}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
         />
-        <p className="mt-3 dark:text-gray-100 text-gray-800">
-          {post.content.slice(0, 30)}...
-        </p>
-      </CardBody>
-      <CardFooter>
-        <div className="w-[96%] mx-auto flex justify-center items-center gap-12 mb-2">
-          <div
-            className="grid grid-cols-2 gap-1 cursor-pointer"
-            onClick={handleUpvote}
-          >
-            <BiUpvote color={isUpvoted ? "green" : ""} />
-            <small>{upvotes}</small>
-          </div>
-          <div
-            className="grid grid-cols-2 gap-1 cursor-pointer"
-            onClick={handleDownvote}
-          >
-            <BiDownvote color={isDownvoted ? "red" : ""} />
-            <small>{downvotes}</small>
-          </div>
-          <div className="cursor-pointer" onClick={handleToggleFavourite}>
-            <BiHeart color={isFavourite ? "red" : ""} />
-          </div>
-          <div className="cursor-pointer">
-            <BiCommentDetail />
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+      ))}
+    </>
   );
 };
 

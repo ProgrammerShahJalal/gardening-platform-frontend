@@ -9,7 +9,7 @@ export default function SkeletonCard() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">My Posts</h1>
-      <div className="grid grid-flow-row-dense justify-center items-center grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-flow-row-dense justify-center items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {skeletonItems.map((item, index) => (
           <Card className="w-[350px] space-y-5 p-4" radius="lg">
             <div className="max-w-[300px] w-full flex items-center gap-3">

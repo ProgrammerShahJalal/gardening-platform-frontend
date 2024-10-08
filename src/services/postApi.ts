@@ -2,17 +2,29 @@
 
 import { cookies } from "next/headers";
 import nexiosInstance from "../config/nexios.config";
-import { Post, PostResponse } from "../types";
+import { Post, PostResponse, Posts } from "../types";
 import { getCurrentUser } from "./authApi";
 
+// Modify PostResponse to reflect nested data structure
+export interface NestedPostResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    success: boolean;
+    statusCode: number;
+    message: string;
+    data: Post[];
+  };
+}
 // Function to fetch my posts
-export const fetchMyPosts = async () => {
+export const fetchMyPosts = async (): Promise<Post[]> => {
   const user = await getCurrentUser();
   try {
-    const response = await nexiosInstance.get<PostResponse>(
+    const response = await nexiosInstance.get<NestedPostResponse>(
       `/post?author=${user?._id}`
     );
-    return response.data;
+    return response?.data?.data?.data || []; 
   } catch (error) {
     throw new Error("Failed to fetch my posts data");
   }

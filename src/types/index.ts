@@ -4,18 +4,26 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
+//Type for a comment/reply author
+export interface Author {
+  _id: string;
+  name: string;
+  email: string;
+  profilePicture: string;
+}
+
 // Type for a reply within a comment
-interface Reply {
+export interface Reply {
   content: string;
-  author: string;
+  author: Author;
   createdAt: string;
   _id: string;
 }
 
 // Type for a comment on a post
-interface Comment {
+export interface Comment {
   content: string;
-  author: string;
+  author: Author;
   createdAt: string;
   _id: string;
   replies: Reply[];
@@ -26,12 +34,7 @@ export interface Post {
   _id: string;
   title: string;
   content: string;
-  author: {
-    _id: string;
-    name: string;
-    email: string;
-    profilePicture: string;
-  };
+  author: Author;
   category: string;
   tags: string[];
   images: string[];
@@ -39,11 +42,9 @@ export interface Post {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  upvotes: string[]; // Array of user IDs who upvoted the post
-  downvotes: string[]; // Array of user IDs who downvoted the post
+  upvotes: string[];
+  downvotes: string[];
   comments: Comment[];
-  data: Post[];
-  message: string;
 }
 
 export interface Posts {
