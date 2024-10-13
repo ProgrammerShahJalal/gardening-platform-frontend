@@ -28,6 +28,13 @@ export interface Comment {
   _id: string;
   replies: Reply[];
 }
+// Type for comments response
+export interface CommentsResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Post;
+}
 
 // Main type for a post
 export interface Post {

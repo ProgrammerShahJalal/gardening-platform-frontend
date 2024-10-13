@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 import React, { useState, useEffect } from "react";
 import { BiDownvote, BiUpvote, BiHeart, BiCommentDetail } from "react-icons/bi";
-import { Post } from "../types";
+import { Comment, Post } from "../types";
 import {
   downvotePost,
   upvotePost,
@@ -30,6 +30,8 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [upvotes, setUpvotes] = useState(post?.upvotes?.length);
   const [downvotes, setDownvotes] = useState(post?.downvotes?.length);
+  const [comments, setComments] = useState(post?.comments || []);
+
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [isDownvoted, setIsDownvoted] = useState(false);
   const [isFavourite, setIsFavourite] = useState(false);
@@ -50,11 +52,8 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         const profileResponse = await getCurrentUser();
         const profile = profileResponse;
 
-        console.log("profile", profile);
-
         // Check if the post is in the user's favourites
         setIsFavourite(profile?.favourites.includes(post._id));
-        console.log("isFavourite", isFavourite);
         setIsUpvoted(post?.upvotes.includes(profile?._id));
         setIsDownvoted(post?.downvotes.includes(profile?._id));
       } catch (error) {
@@ -161,6 +160,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     }
   };
 
+  const updateComments = (newComments: Comment[]) => {
+    setComments(newComments);
+  };
+
   return (
     <>
       <Card key={post?._id} className="w-[350px] mx-auto">
@@ -224,8 +227,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           {post && (
             <PostDetailModal
               post={post}
+              comments={comments}
               isOpen={isModalOpen}
               onClose={handleCloseModal}
+              updateComments={updateComments}
             />
           )}
         </CardBody>
