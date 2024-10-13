@@ -17,6 +17,14 @@ export const siteConfig = {
       label: "Premium Contents",
       href: "/premium-contents",
     },
+    {
+      label: "About",
+      href: "/about-us",
+    },
+    {
+      label: "Contact",
+      href: "/contact-us",
+    },
   ],
   navMenuItems: [
     {
@@ -31,6 +39,14 @@ export const siteConfig = {
     {
       label: "Premium Contents",
       href: "/premium-contents",
+    },
+    {
+      label: "About",
+      href: "/about-us",
+    },
+    {
+      label: "Contact",
+      href: "/contact-us",
     },
   ],
 };

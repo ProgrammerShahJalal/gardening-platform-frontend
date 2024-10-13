@@ -4,7 +4,6 @@ import { title } from "@/src/components/primitives";
 import nexiosInstance from "@/src/config/nexios.config";
 import { Post, Posts } from "@/src/types";
 
-
 const PremiumContentsPage = async () => {
   const { data } = await nexiosInstance.get<Posts>("/post", {
     cache: "no-store",
@@ -16,7 +15,9 @@ const PremiumContentsPage = async () => {
 
   return (
     <div>
-      <h1 className={title()}>Premium Contents</h1>
+      <h1 className="font-bold text-start md:text-6xl text-4xl">
+        Premium Contents
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {premiumContents?.map((post: Post) => (
           <div key={post._id} className="border p-4 rounded-lg shadow">
