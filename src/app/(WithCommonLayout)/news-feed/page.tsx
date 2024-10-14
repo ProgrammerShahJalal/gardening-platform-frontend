@@ -25,13 +25,11 @@ const NewsFeed: React.FC = () => {
   // Fetch posts function
   const fetchPosts = async (pageNumber: number, filter?: FilterOptions) => {
     try {
-      const allPosts = await fetchAllPosts(); // Getting posts sorted by upvotes
-      const filteredPosts = allPosts.filter(
-        (post) =>
-          filter?.category === "all" || post.category === filter?.category,
-      );
-      setPosts((prevPosts) => [...prevPosts, ...filteredPosts]);
-      if (filteredPosts.length === 0 || filteredPosts.length < 10) {
+      const allPosts = await fetchAllPosts({
+        filterOptions: filter || filterOptions,
+      });
+      setPosts((prevPosts) => [...prevPosts, ...allPosts]);
+      if (allPosts.length === 0 || allPosts.length < 10) {
         setHasMore(false); // Stop fetching if there are no more posts
       }
     } catch (error) {
@@ -80,9 +78,10 @@ const NewsFeed: React.FC = () => {
           className="p-2 border border-gray-300 rounded-md"
         >
           <option value="all">All Categories</option>
-          <option value="tips">Tips</option>
-          <option value="guides">Guides</option>
-          <option value="news">News</option>
+          <option value="Vegetables">Vegetables</option>
+          <option value="Flowers">Flowers</option>
+          <option value="Landscaping">Landscaping</option>
+          <option value="Fruits">Fruits</option>
         </select>
       </div>
 
@@ -94,7 +93,7 @@ const NewsFeed: React.FC = () => {
         loader={<h4>Loading more posts...</h4>}
         endMessage={<p>No more posts available.</p>}
       >
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mx-10">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts
             .filter((post) =>
               post.title
@@ -139,7 +138,7 @@ const NewsFeed: React.FC = () => {
                   src={post?.images[0]}
                   alt={post?.title}
                   className="object-cover mt-3 pl-2 rounded-xl"
-                  width={360}
+                  width={380}
                 />
                 <p className="text-white mt-3">
                   {post?.content.slice(0, 80)}...

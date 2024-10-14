@@ -162,12 +162,32 @@ export const replyComments = async (
 };
 
 // Function to fetch all posts
-export const fetchAllPosts = async (): Promise<Post[]> => {
+interface FilterOptions {
+  search: string;
+  category: string;
+}
+
+export const fetchAllPosts = async ({
+  filterOptions,
+}: {
+  filterOptions: FilterOptions;
+}): Promise<Post[]> => {
   const user = await getCurrentUser();
   try {
+    const queryParams = new URLSearchParams();
+
+    if (filterOptions.category && filterOptions.category !== "all") {
+      queryParams.append("category", filterOptions.category);
+    }
+
+    if (filterOptions.search) {
+      queryParams.append("search", filterOptions.search);
+    }
+
     const response = await nexiosInstance.get<NestedPostResponse>(
-      `/post?sortedBy=upvotes`,
+      `/post?sortedBy=upvotes&${queryParams.toString()}`,
     );
+
     return response?.data?.data?.data || [];
   } catch (error) {
     throw new Error("Failed to fetch all posts data");
