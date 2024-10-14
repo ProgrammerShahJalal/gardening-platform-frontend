@@ -40,7 +40,10 @@ export const Navbar: React.FC = () => {
           <NavbarMenuToggle />
         </NavbarContent>
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
+          <NextLink
+            className="flex justify-start flex-row-reverse items-center gap-2"
+            href="/"
+          >
             <Image alt={"Logo"} height={40} src={"/logo.svg"} width={40} />
             <p className="font-bold text-inherit">GreenLife</p>
           </NextLink>

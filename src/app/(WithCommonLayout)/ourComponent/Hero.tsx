@@ -22,13 +22,7 @@ const Hero: React.FC = () => {
         <p className="mt-4 text-lg md:text-xl">
           Discover the best tips, tricks, and tools to help your garden thrive.
         </p>
-        <Button
-          className="mt-8"
-          size="lg"
-          color="primary"
-          radius="full"
-          onPress={() => alert("Get Started clicked!")}
-        >
+        <Button className="mt-8" size="lg" color="primary" radius="full">
           Get Started
         </Button>
       </div>

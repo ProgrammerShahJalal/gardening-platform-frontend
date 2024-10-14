@@ -22,7 +22,7 @@ export const getThePost = async (postId: string): Promise<Post[]> => {
   const user = await getCurrentUser();
   try {
     const response = await nexiosInstance.get<NestedPostResponse>(
-      `/post/${postId}`
+      `/post/${postId}`,
     );
     return response?.data?.data?.data || [];
   } catch (error) {
@@ -35,7 +35,7 @@ export const fetchMyPosts = async (): Promise<Post[]> => {
   const user = await getCurrentUser();
   try {
     const response = await nexiosInstance.get<NestedPostResponse>(
-      `/post?author=${user?._id}`
+      `/post?author=${user?._id}`,
     );
     return response?.data?.data?.data || [];
   } catch (error) {
@@ -51,7 +51,7 @@ export const upvotePost = async (postId: string) => {
   try {
     const response = await nexiosInstance.post<PostResponse>(
       `/post/${postId}/upvote`,
-      {}
+      {},
     );
     return response.data;
   } catch (error) {
@@ -66,7 +66,7 @@ export const downvotePost = async (postId: string) => {
   try {
     const response = await nexiosInstance.post<PostResponse>(
       `/post/${postId}/downvote`,
-      {}
+      {},
     );
     return response.data;
   } catch (error) {
@@ -81,7 +81,7 @@ export const toggleFavouritePost = async (postId: string) => {
   try {
     const response = await nexiosInstance.post<PostResponse>(
       `/post/favourites/${postId}`,
-      {}
+      {},
     );
     return response.data;
   } catch (error) {
@@ -98,7 +98,7 @@ export const addComments = async (postId: string, commentContent: string) => {
   try {
     const response = await nexiosInstance.post<CommentsResponse>(
       `/post/${postId}/comments`,
-      { content: commentContent } // sending comment content
+      { content: commentContent }, // sending comment content
     );
     return response.data;
   } catch (error) {
@@ -110,7 +110,7 @@ export const addComments = async (postId: string, commentContent: string) => {
 export const editComments = async (
   postId: string,
   commentId: string,
-  newContent: string
+  newContent: string,
 ) => {
   const user = await getCurrentUser();
   if (!user) throw new Error("User not logged in");
@@ -118,7 +118,7 @@ export const editComments = async (
   try {
     const response = await nexiosInstance.put<CommentsResponse>(
       `/post/${postId}/comments/${commentId}`,
-      { content: newContent } // sending updated comment content
+      { content: newContent }, // sending updated comment content
     );
     return response.data;
   } catch (error) {
@@ -133,7 +133,7 @@ export const deleteComments = async (postId: string, commentId: string) => {
 
   try {
     const response = await nexiosInstance.delete<CommentsResponse>(
-      `/post/${postId}/comments/${commentId}`
+      `/post/${postId}/comments/${commentId}`,
     );
     return response.data;
   } catch (error) {
@@ -145,7 +145,7 @@ export const deleteComments = async (postId: string, commentId: string) => {
 export const replyComments = async (
   postId: string,
   commentId: string,
-  replyContent: string
+  replyContent: string,
 ) => {
   const user = await getCurrentUser();
   if (!user) throw new Error("User not logged in");
@@ -153,10 +153,23 @@ export const replyComments = async (
   try {
     const response = await nexiosInstance.post<CommentsResponse>(
       `/post/${postId}/comments/${commentId}/replies`,
-      { content: replyContent } // sending reply content
+      { content: replyContent }, // sending reply content
     );
     return response.data;
   } catch (error) {
     throw new Error("Failed to add reply to the comment");
+  }
+};
+
+// Function to fetch all posts
+export const fetchAllPosts = async (): Promise<Post[]> => {
+  const user = await getCurrentUser();
+  try {
+    const response = await nexiosInstance.get<NestedPostResponse>(
+      `/post?sortedBy=upvotes`,
+    );
+    return response?.data?.data?.data || [];
+  } catch (error) {
+    throw new Error("Failed to fetch all posts data");
   }
 };
