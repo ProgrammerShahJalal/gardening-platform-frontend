@@ -6,7 +6,6 @@ import { SwitchProps, useSwitch } from "@nextui-org/switch";
 import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
-
 import { MoonFilledIcon, SunFilledIcon } from "./icons";
 
 export interface ThemeSwitchProps {
@@ -40,8 +39,11 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
     onChange,
   });
 
+  // Ensure Component is treated as a valid JSX component
+  const RenderedComponent = Component as FC<any>;
+
   return (
-    <Component
+    <RenderedComponent
       {...getBaseProps({
         className: clsx(
           "px-px transition-opacity hover:opacity-80 cursor-pointer",
@@ -78,6 +80,6 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
           <MoonFilledIcon size={22} />
         )}
       </div>
-    </Component>
+    </RenderedComponent>
   );
 };
