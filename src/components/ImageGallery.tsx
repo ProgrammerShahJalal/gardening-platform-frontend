@@ -16,9 +16,13 @@ interface IProps {
 export default function ImageGallery({ images }: IProps) {
   return (
     <LightGallery
-      elementClassNames={` mt-2 gap-2 grid place-items-center ${
-        images.length === 1 ? "grid-cols-1" : "grid-cols-2"
-      } `}
+      elementClassNames={`mt-2 gap-2 grid place-items-center 
+        ${
+          images.length === 1
+            ? "grid-cols-1"
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+        } 
+      `}
       plugins={[lgThumbnail, lgZoom]}
       speed={500}
     >
@@ -26,13 +30,15 @@ export default function ImageGallery({ images }: IProps) {
         <Link
           key={index}
           className={`w-full ${
-            images.length === 3 && index === 0 ? "col-span-2" : "col-span-1"
+            images.length === 3 && index === 0
+              ? "col-span-1 sm:col-span-2"
+              : "col-span-1"
           }`}
           href={image}
         >
           <Image
             alt={`image-${index}`}
-            className="h-[400px] w-full object-cover"
+            className="h-[200px] sm:h-[300px] lg:h-[400px] w-full object-cover"
             height={500}
             src={image}
             width={500}
